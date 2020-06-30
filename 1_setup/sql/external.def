@@ -1,0 +1,22 @@
+LIBRARY EXTERNAL
+EXPORTS
+path_access
+path_chmod
+path_get_type
+path_get_size
+copy_file
+clob_to_file
+make_directory
+remove_directory
+move_directory
+sizeof_directory
+sql_path_exists
+sql_path_readable_writable
+sql_copy_file
+sql_clob_to_file
+sql_make_directory
+sql_remove_directory
+sql_move_directory
+sql_sizeof_directory
+sql_is_windows
+sql_system_call
