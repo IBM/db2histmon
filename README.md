@@ -7,6 +7,7 @@ By enabling the collection of Db2 Historic Monitoring(db2histmon), you can impro
 * The scripts can be deployed in any Unix or Windows environment
 * setup scripts: Python2 or higher, as well as the python ibm_db module are required to execute the scripts
 * loader and quickparser scripts: Python3 and the python ibm_db module
+* The scripts can be deployed on any relatively modern versions of Db2 (Version 10.1, 10.5, 11.1, 11.5)
 * Db2 DBADM authority is required on the database where the historic monitoring will be deployed
 * A C++ compiler (for example g++ on Unix or Visual Studio on Windows) is required (in order to use bldrtn to compile the control UDFS which are used by the historic monitoring framework)
 
