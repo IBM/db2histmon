@@ -363,6 +363,28 @@
         "quickparse_summary_columns": "WORKLOAD_NAME, WORKLOAD_ID, MEMBER, POOL_READ_TIME, POOL_WRITE_TIME, RQSTS_COMPLETED_TOTAL, ROWS_MODIFIED, ROWS_READ, ROWS_RETURNED, TOTAL_CPU_TIME, TOTAL_WAIT_TIME"
     },
     {
+        "collection_name": "MON_GET_FCM",
+        "collection_class": "SQL",
+        "collection_command": "SELECT CURRENT TIMESTAMP AS COLLECTION_TIME, T.* FROM TABLE ( MON_GET_FCM ( -2 ) ) T",
+        "collection_freq": "* * * * *",
+        "collection_level": "2",
+        "collection_condition": "",
+        "loader_join_columns": "HOSTNAME, MEMBER",
+        "loader_diff_exempt_columns": "MEMBER, BUFF_AUTO_TUNING, CH_AUTO_TUNING",
+        "quickparse_summary_columns": ""
+    },
+    {
+        "collection_name": "MON_GET_DATABASE",
+        "collection_class": "SQL",
+        "collection_command": "SELECT CURRENT TIMESTAMP AS COLLECTION_TIME, T.* FROM TABLE ( MON_GET_DATABASE ( -2 ) ) T",
+        "collection_freq": "*/10 * * * *",
+        "collection_level": "2",
+        "collection_condition": "",
+        "loader_join_columns": "MEMBER",
+        "loader_diff_exempt_columns": "MEMBER, DB_CONN_TIME",
+        "quickparse_summary_columns": ""
+    },
+    {
         "collection_name": "VMSTAT",
         "collection_class": "SYS",
         "collection_command": "vmstat",
