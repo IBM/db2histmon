@@ -43,7 +43,7 @@ begin
     declare time_chg                      varchar(7)      default '' ;
     declare p_sep                         char ;
     declare task_details_path             varchar(512) ;
-    declare coll_path                     varchar(512) ;
+    declare coll_path, lob_path           varchar(512) ;
     declare coll_size                     bigint ;
     declare coll_status                   varchar(7) ;
     declare file_type                     varchar(3) ;
@@ -159,6 +159,15 @@ begin
         goto exit ;
     end if ;
 
+    -- create coll_path/IBMHIST_db_name/db_name_yrmndyhr(_tm_chg)/lob directory if it does not exist
+    set lob_path = coll_path || p_sep || 'lob' ;
+    call IBMHIST.MAKE_DIRECTORY ( lob_path, retcode ) ;
+
+    if ( vSQLCODE < 0 or vSQLSTATE != '00000' or retcode < 0 ) then
+        set err_msg = 'Failed to create data lob directory: ' || lob_path || ', external.C line number: ' || retcode ;
+        goto exit ;
+    end if ;
+
     -- get task_details.json path
     select value into task_details_path
         from IBMHIST.TAB_CONFIG
@@ -193,7 +202,7 @@ begin
     -- execute command and export data to temp file
     if  ( class = 'SQL' ) then
 
-        call SYSPROC.ADMIN_CMD ( ' export to ' || tmp_path || ' of ' || file_type || ' ' || command ) ;
+        call SYSPROC.ADMIN_CMD ( ' export to ' || tmp_path || ' of ' || file_type || ' lobs to ' || lob_path || ' ' || command ) ;
 
         if ( vSQLCODE < 0 or vSQLSTATE != '00000' or retcode < 0 ) then
             set err_msg = 'Failed to execute command and export to: ' || tmp_path ;
