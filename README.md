@@ -22,3 +22,7 @@ For detailed instructions, please refer to db2histmon/2_loader/README.md
 ## Quickparse folder
 This quickparse script is a companion to the db2histmon suite. It is used to display db2histmon generated data (which are in comma delimited format) to the screen in a more human readable columnar format.
 For detailed instructions, please refer to db2histmon/3_quickparse/README.md
+
+## Report folder
+This report script is a companion to the db2histmon suite. It generates reports similar to those in the MONREPORT module using the collected data.
+For detailed instructions, please refer to db2histmon/4_report/README.md
