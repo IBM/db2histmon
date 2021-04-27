@@ -43,21 +43,28 @@ taskDetailFileName = "task_details_copy.json"
 
 # Set up preconditions. Set up the table space with proper page size.
 def createDBObjects(conn):
-  # Create a system temporary table space with a sufficient page size
+  # Drop the system temporary table space
   try:
     stmt = ibm_db.exec_immediate(conn, "drop tablespace {}".format(tempTsName))
-    stmt = ibm_db.exec_immediate(conn, "drop bufferpool {}".format(bp32kName))
   except:
-    pass
-  stmt = ibm_db.exec_immediate(conn, "create bufferpool {} pagesize 32K".format(bp32kName))
-  stmt = ibm_db.exec_immediate(conn, "create system temporary tablespace {} pagesize 32K bufferpool {}".format(tempTsName, bp32kName))
+     pass
 
   # Drop tables
-  print("Drop table space", monTSName)
   try:
+    print("Drop table space", monTSName)
     stmt = ibm_db.exec_immediate(conn,"drop tablespace {}".format(monTSName))
   except:
     pass
+
+  # Drop buffer pool
+  try:
+    stmt = ibm_db.exec_immediate(conn, "drop bufferpool {}".format(bp32kName))
+  except:
+    pass
+
+  # Create buffer pool and table spaces
+  stmt = ibm_db.exec_immediate(conn, "create bufferpool {} pagesize 32K".format(bp32kName))
+  stmt = ibm_db.exec_immediate(conn, "create system temporary tablespace {} pagesize 32K bufferpool {}".format(tempTsName, bp32kName))
   print("Create table space", monTSName)
   stmt = ibm_db.exec_immediate(conn,"create tablespace {} pagesize 32K bufferpool {}".format(monTSName, bp32kName))
 
