@@ -81,5 +81,6 @@ MON_GET_MEMORY_SET_DELTA
 ```
   
 2. Display the highest CPU consuming queries from the IBMHIST.MON_GET_PKG_CACHE_STMT data collection:
-   db2 "select COLLECTIONTIME, TOTAL_CPU_TIME, SUBSTR(1,50, STMT_TEXT) from IBMHIST.MON_GET_PKG_CACHE_STMT order by TOTAL_CPU desc fetch first 5 rows only"
+   
+   db2 "select COLLECTION_TIME, TOTAL_CPU_TIME, substr(STMT_TEXT, 1, 50) from IBMHIST.MON_GET_PKG_CACHE_STMT order by TOTAL_CPU_TIME desc fetch first 5 rows"
    
