@@ -173,7 +173,7 @@ def main():
         while tuple != False:
           colName, colType = tuple[0], tuple[2]
           loadDeltaStmt = "{} {},".format(loadDeltaStmt, colName)
-          if colType in ["TIMESTAMP", "BIGINT"] and colName not in exemptionColList:
+          if colType in ["TIMESTAMP", "BIGINT"] and colName not in exemptionColList and colName != collectionTimeColName:
             if colType == "TIMESTAMP":
               alterColList.append(colName)
               colList="{} COALESCE(TIMESTAMPDIFF(2, current.{} - previous.{}), 0),".format(colList, colName, colName)
