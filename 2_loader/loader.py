@@ -168,7 +168,17 @@ def main():
         alterColList, colList = [], ""
         exemptionColList = [col.strip() for col in task['loader_diff_exempt_columns'].split(',')]
         joinColumns = [col.strip() for col in task['loader_join_columns'].split(",") ]
-        orderByList = ','.join(joinColumns + [collectionTimeColName])
+        # The array should never be empty unless somebody forgot to specify
+        # "loader_join_columns" in the JSON file, but never hurts to check
+        if joinColumns:
+          # Despite not empty, the array may still contain only one element, and
+          # that could be a null string ("loader_join_columns": "")
+          if joinColumns[0]:
+            orderByList = ','.join(joinColumns + [collectionTimeColName])
+          else:
+            orderByList = collectionTimeColName
+        else:
+         orderByList = collectionTimeColName
         tuple = ibm_db.fetch_tuple(tabDes)
         while tuple != False:
           colName, colType = tuple[0], tuple[2]
@@ -199,8 +209,10 @@ def main():
         # Append the join clause
         loadDeltaStmt = "{} FROM current AS previous RIGHT JOIN current ON previous.rowId + 1 = current.rowId ".format(loadDeltaStmt)
         for col in joinColumns:
-          loadDeltaStmt = "{} and previous.{} = current.{} ".format(loadDeltaStmt, col, col)
-       
+          # col can still be an empty string ("loader_join_columns": "")
+          if col:
+            loadDeltaStmt = "{} and previous.{} = current.{} ".format(loadDeltaStmt, col, col)
+
         # Load the delta data into table
         print("Loading data into", deltaTableName)
         stmt = ibm_db.exec_immediate(conn, loadDeltaStmt)
