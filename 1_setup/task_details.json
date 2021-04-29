@@ -7,7 +7,7 @@
         "collection_level": "1",
         "collection_condition": "",
         "loader_join_columns": "",
-        "loader_diff_exempt_columns": "ALL",
+        "loader_diff_exempt_columns": "",
         "quickparse_summary_columns": "ALL"
     },
     {
@@ -18,7 +18,7 @@
         "collection_level": "1",
         "collection_condition": "PURESCALE",
         "loader_join_columns": "",
-        "loader_diff_exempt_columns": "ALL",
+        "loader_diff_exempt_columns": "",
         "quickparse_summary_columns": "ALL"
     },
     {
@@ -29,7 +29,7 @@
         "collection_level": "1",
         "collection_condition": "",
         "loader_join_columns": "",
-        "loader_diff_exempt_columns": "ALL",
+        "loader_diff_exempt_columns": "",
         "quickparse_summary_columns": "APPLICATION_HANDLE, APPLICATION_ID, DBPARTITIONNUM, ACTIVITY_ID, AGENT_TID, AGENT_STATE, EVENT_TYPE, EVENT_OBJECT, EVENT_STATE, REQUEST_TYPE, CLIENT_PID, SESSION_AUTH_ID, REQUEST_START_TIME"
     },
     {
@@ -84,7 +84,7 @@
         "collection_level": "1",
         "collection_condition": "",
         "loader_join_columns": "",
-        "loader_diff_exempt_columns": "ALL",
+        "loader_diff_exempt_columns": "",
         "quickparse_summary_columns": "HLD_APPLICATION_HANDLE, HLD_MEMBER, LOCK_WAIT_START_TIME, LOCK_NAME, LOCK_OBJECT_TYPE, LOCK_MODE, LOCK_MODE_REQUESTED, LOCK_STATUS"
     },
     {
@@ -95,7 +95,7 @@
         "collection_level": "1",
         "collection_condition": "PURESCALE",
         "loader_join_columns": "HOSTNAME, ID, CF_CMD_NAME",
-        "loader_diff_exempt_columns": "ALL",
+        "loader_diff_exempt_columns": "",
         "quickparse_summary_columns": "ALL"
     },
     {
@@ -106,7 +106,7 @@
         "collection_level": "1",
         "collection_condition": "PURESCALE",
         "loader_join_columns": "",
-        "loader_diff_exempt_columns": "ALL",
+        "loader_diff_exempt_columns": "",
         "quickparse_summary_columns": "ALL"
     },
     {
@@ -117,7 +117,7 @@
         "collection_level": "1",
         "collection_condition": "PURESCALE",
         "loader_join_columns": "CF_CMD_NAME, ID, MEMBER",
-        "loader_diff_exempt_columns": "ALL",
+        "loader_diff_exempt_columns": "",
         "quickparse_summary_columns": "ALL"
     },
     {
@@ -183,7 +183,7 @@
         "collection_level": "2",
         "collection_condition": "",
         "loader_join_columns": "",
-        "loader_diff_exempt_columns": "ALL",
+        "loader_diff_exempt_columns": "",
         "quickparse_summary_columns": "ALL"
     },
     {
@@ -194,7 +194,7 @@
         "collection_level": "2",
         "collection_condition": "",
         "loader_join_columns": "",
-        "loader_diff_exempt_columns": "ALL",
+        "loader_diff_exempt_columns": "",
         "quickparse_summary_columns": "ALL"
     },
     {
@@ -205,7 +205,7 @@
         "collection_level": "2",
         "collection_condition": "",
         "loader_join_columns": "",
-        "loader_diff_exempt_columns": "ALL",
+        "loader_diff_exempt_columns": "",
         "quickparse_summary_columns": "ALL"
     },
     {
@@ -216,7 +216,7 @@
         "collection_level": "2",
         "collection_condition": "",
         "loader_join_columns": "",
-        "loader_diff_exempt_columns": "ALL",
+        "loader_diff_exempt_columns": "",
         "quickparse_summary_columns": "ALL"
     },
     {
@@ -238,7 +238,7 @@
         "collection_level": "2",
         "collection_condition": "",
         "loader_join_columns": "MEMBER",
-        "loader_diff_exempt_columns": "ALL",
+        "loader_diff_exempt_columns": "",
         "quickparse_summary_columns": "ALL"
     },
     {
@@ -315,7 +315,7 @@
         "collection_level": "2",
         "collection_condition": "",
         "loader_join_columns": "",
-        "loader_diff_exempt_columns": "ALL",
+        "loader_diff_exempt_columns": "",
         "quickparse_summary_columns": "ALL"
     },
     {
@@ -348,7 +348,7 @@
         "collection_level": "2",
         "collection_condition": "",
         "loader_join_columns": "",
-        "loader_diff_exempt_columns": "ALL",
+        "loader_diff_exempt_columns": "",
         "quickparse_summary_columns": "MEMBER, COORD_MEMBER, APPLICATION_HANDLE, UTILITY_ID, UTILITY_START_TIME, UTILITY_TYPE, UTILITY_OPERATION_TYPE, UTILITY_INVOKER_TYPE, UTILITY_PRIORITY, OBJECT_TYPE, OBJECT_SCHEMA, OBJECT_NAME, UTILITY_DETAIL"
     },
     {
