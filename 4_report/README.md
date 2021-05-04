@@ -4,6 +4,9 @@ This report script is a companion to the db2histmon suite. It generates reports 
 - DBSUMMARY (Similar to MONREPORT.DBSUMMARY)
 - CONNECTION (Similar to MONREPORT.CONNECTION)
 - PKGCACHE (Similar to MONREPORT.PKGCACHE)
+- LOCKWAIT (Similar to MONREPORT.LOCKWAIT)
+- CURRENTAPPS (Similar to MONREPORT.CURRENTAPPS)
+- CURRENTSQL (Similar to MONREPORT.CURRENTSQL)
 
 ## Overview
 
