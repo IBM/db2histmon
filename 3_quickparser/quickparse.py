@@ -47,7 +47,7 @@ def readAndPrintData(columns, fileList, summaryCols, applHandle, dataType):
         # Skip the first line which are the column names
         next(f)
         for line in f:
-          detailLine = line.encode('ascii', 'ignore').decode('ascii').split(',')
+          detailLine = [x.strip('\n') for x in line.encode('ascii', 'ignore').decode('ascii').split(',')]
           if matchApplHandle(detailLine, applHandle, columns):
             rawData.append(detailLine)
     if not rawData:
@@ -73,7 +73,7 @@ def readAndPrintData(columns, fileList, summaryCols, applHandle, dataType):
         # Skip the first line which are the column names
         next(f)
         for line in f:
-          lineList = line.encode('ascii', 'ignore').decode('ascii').split(',')
+          lineList = [x.strip('\n') for x in line.encode('ascii', 'ignore').decode('ascii').split(',')]
           summaryLine = [lineList[i] for i in summaryIndex]
           # Filter the raw data by application handle if needed
           if matchApplHandle(lineList, applHandle, columns):
@@ -127,13 +127,17 @@ def main():
 
   # Based on the start timestamp and the end timestamp provided, find the qualified hourly directories
   startDate, endDate = args.startDate, args.endDate
-  startTs = time.mktime(time.strptime(startDate, '%Y-%m-%d-%H.%M.%S')) if startDate else time.time()
-  startHour = time.mktime(time.strptime(startDate[:startDate.find('.')], '%Y-%m-%d-%H')) if startDate else time.time()
-  endTs = time.mktime(time.strptime(endDate, '%Y-%m-%d-%H.%M.%S')) if endDate else time.time()
-  endHour = time.mktime(time.strptime(endDate[:endDate.find('.')], '%Y-%m-%d-%H')) if endDate else time.time()
+  try:
+    startTs = time.mktime(time.strptime(startDate, '%Y-%m-%d-%H.%M.%S')) if startDate else 0
+    startHour = time.mktime(time.strptime(startDate[:startDate.find('.')], '%Y-%m-%d-%H')) if startDate else 0
+    endTs = time.mktime(time.strptime(endDate, '%Y-%m-%d-%H.%M.%S')) if endDate else time.time()
+    endHour = time.mktime(time.strptime(endDate[:endDate.find('.')], '%Y-%m-%d-%H')) if endDate else time.time()
+  except ValueError:
+    print("Unexpected time format! Expected time format is YYYY-MM-DD-hh.mm.ss")
+    exit(1)
   hourDirList = [hourDir for hourDir in basePath.glob('*_??????????') if startHour <= time.mktime(time.strptime(hourDir.name[-10:], '%Y%m%d%H')) <= endTs ]
   if not hourDirList:
-    print("No hourly directory found with startDate: {} and endDate: {}".format(startDate, endDate))
+    print("No hourly directory found under {}".format(basePath))
     exit(1)
 
   # Find the task details file and read the defined summary columns in summary display mode
@@ -167,7 +171,7 @@ def main():
       else:
         print("Invalid raw data file name: {}".format(file))
   if not fileList:
-    print("No raw data file found with the time range from {} to {}".format(startDate, endDate))
+    print("No raw data file found with the given time range.")
     exit(1)
 
   # Read the first line of a sample raw data file to get the column names
