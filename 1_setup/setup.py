@@ -329,6 +329,9 @@ def schedule_tasks(conn, database, in_coll_lvl, env):
     # insert tasks into IBMHIST.TAB_TASKS and schedule with Admin Task Scheduler
     for task in tasks:
 
+        if 'collection_name' not in task:
+            continue
+
         # get paramaters
         collection_name = task['collection_name']
         collection_freq = task['collection_freq']
