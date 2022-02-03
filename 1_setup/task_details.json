@@ -1,5 +1,27 @@
 [
     {
+        "field_name": "@AV_PREFETCH_WAIT_TIME",
+        "field_valid": "true",
+        "field_type": "decimal(5,2)",
+        "field_formula": "CASE WHEN PREFETCH_WAITS = 0 THEN 0 ELSE ( PREFETCH_WAIT_TIME / PREFETCH_WAIT_TIME ) end"
+    },
+    {
+        "field_name": "@ACTIVE_LOG_RANGE",
+        "field_valid": "false"
+    },
+    {
+        "field_name": "@TOTAL_POOL_L_READS",
+        "field_valid": "true",
+        "field_type": "bigint",
+        "field_formula": "POOL_DATA_L_READS + POOL_INDEX_L_READS + POOL_TEMP_DATA_L_READS + POOL_TEMP_INDEX_L_READS + POOL_TEMP_XDA_L_READS + POOL_XDA_L_READS"
+    },
+    {
+        "field_name": "@TOTAL_POOL_P_READS",
+        "field_valid": "true",
+        "field_type": "bigint",
+        "field_formula": "POOL_DATA_P_READS + POOL_INDEX_P_READS + POOL_TEMP_DATA_P_READS + POOL_TEMP_INDEX_P_READS + POOL_TEMP_XDA_P_READS + POOL_XDA_P_READS"
+    },
+    {
         "collection_name": "ENV_GET_SYSTEM_RESOURCES",
         "collection_class": "SQL",
         "collection_command": "SELECT CURRENT TIMESTAMP AS COLLECTION_TIME, T.* FROM TABLE ( SYSPROC.ENV_GET_SYSTEM_RESOURCES ( ) ) T",
@@ -39,6 +61,7 @@
         "collection_freq": "*/3 * * * *",
         "collection_level": "1",
         "collection_condition": "",
+	"loader_additional_fields": "@AV_PREFETCH_WAIT_TIME, @TOTAL_POOL_L_READS, @TOTAL_POOL_P_READS",
         "loader_join_columns": "APPLICATION_HANDLE, MEMBER",
         "loader_diff_exempt_columns": "APPLICATION_HANDLE, CLIENT_PID, CONNECTION_START_TIME, LOCK_TIMEOUT_VAL, NUM_LOCKS_WAITING, UOW_START_TIME, UOW_STOP_TIME, PREV_UOW_STOP_TIME, NUM_ASSOC_AGENTS, ASSOCIATED_AGENTS_TOP, SORT_HEAP_ALLOCATED, SORT_SHRHEAP_ALLOCATED",
         "quickparse_summary_columns": "APPLICATION_HANDLE, MEMBER, CONNECTION_START_TIME, AGENT_WAIT_TIME, AGENT_WAITS_TOTAL, LOCK_TIMEOUTS, LOCK_WAIT_TIME, LOG_BUFFER_WAIT_TIME, NUM_LOG_BUFFER_FULL, LOG_DISK_WAIT_TIME, ROWS_READ, TOTAL_ACT_TIME, TOTAL_CPU_TIME, TOTAL_WAIT_TIME, TOTAL_ACT_WAIT_TIME"
@@ -380,6 +403,7 @@
         "collection_freq": "*/10 * * * *",
         "collection_level": "2",
         "collection_condition": "",
+	"loader_additional_fields": "AV_PREFETCH_WAIT_TIME, TOTAL_POOL_L_READS, TOTAL_POOL_P_READS",
         "loader_join_columns": "MEMBER",
         "loader_diff_exempt_columns": "MEMBER, DB_CONN_TIME",
         "quickparse_summary_columns": ""

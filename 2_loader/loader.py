@@ -106,6 +106,9 @@ def main():
     print("No hourly directory found in {}".format(sourcePath))
     exit(1)
 
+  # additional fields - begin with no entries
+  addFields = dict()
+
   # Load task details from json file
   searchTaskDetailFile = [file for file in hourDirList[0].glob(taskDetailFileName)]
   if searchTaskDetailFile:
@@ -119,6 +122,19 @@ def main():
 
   # For each SQL task, import the data and delta data into tables if needed
   for task in tasks:
+
+    # if not description of a collecton ...
+    if 'collection_name' not in task:
+      # check if this element describes a new field name
+      if 'field_name' in task:
+        # default is field_valid = true
+        if 'field_valid' in task and task['field_valid'] == 'false':
+          continue
+        # add to the fields that are defined
+        addFields[task['field_name']] = task 
+      # nothing else to do with this element
+      continue
+
     collectionName = task['collection_name']
     if args.dataCollectionName and args.dataCollectionName != collectionName:
       continue
@@ -160,6 +176,11 @@ def main():
         print("Creating the delta data table:",deltaTableName)
         createDeltaTable = "create table {} as ( {} ) WITH NO DATA NOT LOGGED INITIALLY IN {}".format(deltaTableName, task['collection_command'], monTSName)
         stmt = ibm_db.exec_immediate(conn, createDeltaTable)
+
+        # get the lis of additional fields for this particular collection
+        addFieldList = []
+        if 'loader_additional_fields' in task:
+          addFieldList = [col.strip() for col in task['loader_additional_fields'].split(',')]
  
         # Read column names and types from the describe command
         desCmd = "CALL SYSPROC.ADMIN_CMD('describe table {} show detail' )".format(deltaTableName)
@@ -186,11 +207,11 @@ def main():
           if colType in ["TIMESTAMP", "BIGINT"] and colName not in exemptionColList and colName != collectionTimeColName:
             if colType == "TIMESTAMP":
               alterColList.append(colName)
-              colList="{} COALESCE(TIMESTAMPDIFF(2, current.{} - previous.{}), 0),".format(colList, colName, colName)
+              colList="{} COALESCE(TIMESTAMPDIFF(2, current.{} - previous.{}), 0) as {},".format(colList, colName, colName, colName)
             else:
-              colList="{} COALESCE(current.{} - previous.{}, 0),".format(colList, colName, colName)
+              colList="{} COALESCE(current.{} - previous.{}, 0) as {},".format(colList, colName, colName, colName)
           else:
-            colList = "{} current.{},".format(colList, colName)
+            colList = "{} current.{} as {},".format(colList, colName, colName)
           tuple = ibm_db.fetch_tuple(tabDes)
 
         # Alter the column data type from TIMESTAMP to BIGINT
@@ -199,11 +220,28 @@ def main():
           stmt = ibm_db.exec_immediate(conn, "CALL SYSPROC.ADMIN_CMD('reorg table {}' )".format(deltaTableName))
           stmt = ibm_db.exec_immediate(conn, "commit")
 
+        # append additional fields to the delta table
+        for col in addFieldList:
+          # additional field specified that was not defined previously, or is not valid ?
+          if addFields.get(col) == None:
+            print('WARNING: ' + collectionName + ': Field "' + col + '" is not defined - ignore and proceed with fingers crossed.')
+            addFieldList.remove(col)
+            continue
+          # add the field to the delta table
+          stmt = ibm_db.exec_immediate(conn,"alter table {} add column {} {}".format(deltaTableName,col,addFields[col]['field_type']))
+          # add field to the INSERT field list
+          loadDeltaStmt = "{} {},".format(loadDeltaStmt, col)
+
         # Remove the last comma and append the closing bracket
         loadDeltaStmt = loadDeltaStmt.rstrip(',') + ")"
         colList = colList.rstrip(',')
         loadDeltaStmt = "{} with current as ( SELECT ( row_number() over ( order by {} ) ) rowId, \
-                         {}.* from {} order by {} ) select ".format(loadDeltaStmt, orderByList, tableName, tableName, orderByList)
+                         {}.* from {} order by {} ) select * ".format(loadDeltaStmt, orderByList, tableName, tableName, orderByList)
+        # additional fields in the SELECT
+        for col in addFieldList:
+          loadDeltaStmt = "{}, {} as {}".format(loadDeltaStmt, addFields[col]['field_formula'], col)
+          #loadDeltaStmt = loadDeltaStmt + ", " + addFields[col]['field_formula'] + " as " + col
+        loadDeltaStmt = loadDeltaStmt + " from table( select "
         # Append the column list
         loadDeltaStmt += colList
         # Append the join clause
@@ -213,6 +251,8 @@ def main():
           if col:
             loadDeltaStmt = "{} and previous.{} = current.{} ".format(loadDeltaStmt, col, col)
 
+        # add the final closing bracket
+        loadDeltaStmt = loadDeltaStmt + ")"
         # Load the delta data into table
         print("Loading data into", deltaTableName)
         stmt = ibm_db.exec_immediate(conn, loadDeltaStmt)
