@@ -74,7 +74,7 @@ def setup_IBMHIST(conn, bldrtn_path):
 
     # build external functions
     print("        Building external functions ...")
-    subprocess.check_call("bldrtn.bat external", shell=True) if os.name == 'nt' else subprocess.check_call("bldrtn external", shell=True)
+    subprocess.check_call("bldrtn.bat external", shell=True) if os.name == 'nt' else subprocess.check_call("./bldrtn external", shell=True)
     exec_sql_file(conn, "external.sql")
 
     # register tables
@@ -152,14 +152,14 @@ def config_IBMHIST(conn, coll_path, arch_path, max_size, arch_cmd, arch_ext):
     print("    Setting COLL_PATH to '%s' ..." % (coll_path) )
     assert os.path.exists(coll_path), "Data collection path: %s does not exist" % (coll_path)
     stmt, ret_coll_path, retcode = ibm_db.callproc(conn, 'IBMHIST.PATH_READABLE_WRITABLE', (coll_path, 0))
-    assert retcode is 0 or retcode is None, "Data collection path: %s does not provide fenced external functions read/write access" % (coll_path)
+    assert retcode == 0 or retcode is None, "Data collection path: %s does not provide fenced external functions read/write access" % (coll_path)
     ibm_db.exec_immediate(conn, "INSERT INTO IBMHIST.TAB_CONFIG VALUES ( 'COLL_PATH', '%s', 'DIRECTORY PATH OF DATA COLLECTION') " % (coll_path) )
 
     # add data archival path configuration
     print("    Setting ARCH_PATH to '%s' ..." % (arch_path) )
     assert os.path.exists(arch_path), "Data archival path: %s does not exist" % (arch_path)
     stmt, ret_arch_path, retcode = ibm_db.callproc(conn, 'IBMHIST.PATH_READABLE_WRITABLE', (arch_path, 0))
-    assert retcode is 0 or retcode is None, "Data archival path: %s does not provide fenced external functions read/write access" % (arch_path)
+    assert retcode == 0 or retcode is None, "Data archival path: %s does not provide fenced external functions read/write access" % (arch_path)
     ibm_db.exec_immediate(conn, "INSERT INTO IBMHIST.TAB_CONFIG VALUES ( 'ARCH_PATH', '%s', 'DIRECTORY PATH OF DATA ARCHIVAL') " % (arch_path) )
 
     # add max size configuration
@@ -416,7 +416,8 @@ def main():
 
     # get diagpath
     cfgs = subprocess.check_output("db2 get dbm cfg", shell=True).decode('ascii').splitlines()
-    diagpath = [cfg.split('=')[1].strip() for cfg in cfgs if "Diagnostic data directory path" in cfg][0]
+    #diagpath = [cfg.split('=')[1].strip() for cfg in cfgs if "Diagnostic data directory path" in cfg][0]
+    diagpath = [cfg.split('=')[1].strip() for cfg in cfgs if "Current member resolved DIAGPATH" in cfg][0]
 
     # parse arguments
     description="Setup IBMHIST monitoring program. View README for more information."
